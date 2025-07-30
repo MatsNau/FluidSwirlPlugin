@@ -1,0 +1,121 @@
+# Build directories
+build/
+out/
+bin/
+lib/
+
+# Visual Studio files
+.vs/
+*.vcxproj.user
+*.vcxproj.filters.user
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.sln.DotSettings.user
+
+# Visual Studio Code
+.vscode/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# OpenFX bundle files (keep source, ignore built)
+*.ofx.bundle/Contents/Win64/*.ofx
+*.ofx.bundle/Contents/Linux-x86-64/*.ofx
+*.ofx.bundle/Contents/MacOS/*.ofx
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE files
+*.cbp
+*.layout
+*.depend
+*.workspace
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs
+*.log
+
+# Runtime generated files
+*.autosave
+
+# CUDA files
+*.cubin
+*.fatbin
+*.ptx
+
+# Windows specific
+*.manifest
+*.res
+*.rc.tmp
+
+# Local environment files
+.env
+.env.local
+
+# Backup files
+*.bak
+*.backup
+*_backup
