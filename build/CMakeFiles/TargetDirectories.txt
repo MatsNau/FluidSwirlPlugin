@@ -1,0 +1,4 @@
+C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/FluidSwirl.dir
+C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/INSTALL.dir
+C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/ALL_BUILD.dir
+C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/ZERO_CHECK.dir
