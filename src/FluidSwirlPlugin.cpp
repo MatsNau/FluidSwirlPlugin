@@ -305,8 +305,8 @@ private:
                         }
                         
                         // Calculate displacement strength (stronger closer to projectile)
-                        double falloff = exp(-distanceFromProjectile / (_projectileRadius * 0.3));
-                        double displacement = _swirlIntensity * 50.0 * falloff;
+                        double falloff = exp(-distanceFromProjectile / (_projectileRadius * 0.2));
+                        double displacement = _swirlIntensity * 80.0 * falloff; // Stronger base displacement
                         
                         // Pull pixels in projectile direction with some perpendicular swirl
                         double perpX = -projDirY; // Perpendicular to projectile direction
@@ -343,23 +343,71 @@ private:
                             double distToWake = sqrt((x - closestX) * (x - closestX) + (y - closestY) * (y - closestY));
                             
                             if (distToWake < _wakeWidth) {
-                                // Wake trail effect - turbulent disturbance
-                                double wakeStrength = _flowStrength * exp(-distToWake / (_wakeWidth * 0.5));
+                                // Wake trail effect - fluid diffusion and streaking
+                                double wakeStrength = _flowStrength * exp(-distToWake / (_wakeWidth * 0.3));
                                 double ageOfWake = 1.0 - (projOntoWake / wakeLength); // Newer wake is stronger
                                 wakeStrength *= exp(-ageOfWake / _wakeDecayParam);
                                 
-                                // Add turbulent displacement
-                                double turbulentX = sin(distToWake * 0.3 + projOntoWake * 0.1) * wakeStrength;
-                                double turbulentY = cos(distToWake * 0.2 + projOntoWake * 0.15) * wakeStrength;
+                                // Strong longitudinal streaking (along projectile direction)
+                                double streakDistance = wakeStrength * 20.0; // Much stronger streaking
+                                srcX += wakeDirX * streakDistance * (1.0 + sin(distToWake * 0.1) * 0.3);
+                                srcY += wakeDirY * streakDistance * (1.0 + cos(distToWake * 0.1) * 0.3);
                                 
-                                srcX += turbulentX;
-                                srcY += turbulentY;
+                                // Add perpendicular diffusion (spreading outward)
+                                double perpX = -wakeDirY;
+                                double perpY = wakeDirX;
+                                double diffusion = wakeStrength * 5.0 * sin(projOntoWake * 0.05 + distToWake * 0.2);
+                                srcX += perpX * diffusion;
+                                srcY += perpY * diffusion;
+                                
+                                // Add some turbulent mixing
+                                double turbulence = wakeStrength * 8.0;
+                                srcX += sin(distToWake * 0.4 + projOntoWake * 0.08) * turbulence;
+                                srcY += cos(distToWake * 0.35 + projOntoWake * 0.12) * turbulence;
                             }
                         }
                     }
                 }
                 
-                // Sample with bilinear interpolation
+                // Determine if we're in a wake-affected area for special sampling
+                bool inWakeArea = false;
+                double wakeBlurAmount = 0.0;
+                
+                // Check if we're in the wake trail for fluid diffusion sampling
+                if (applyEffect && _flowMode == 2) {
+                    double progress = (_currentTime / _projectileSpeed);
+                    double projectileX = _projectileStartX + progress * (_projectileEndX - _projectileStartX);
+                    double projectileY = _projectileStartY + progress * (_projectileEndY - _projectileStartY);
+                    
+                    double wakeStartX = _projectileStartX;
+                    double wakeStartY = _projectileStartY;
+                    double wakeEndX = projectileX;
+                    double wakeEndY = projectileY;
+                    
+                    double wakeLength = sqrt((wakeEndX - wakeStartX) * (wakeEndX - wakeStartX) + 
+                                           (wakeEndY - wakeStartY) * (wakeEndY - wakeStartY));
+                    
+                    if (wakeLength > 0.001) {
+                        double wakeDirX = (wakeEndX - wakeStartX) / wakeLength;
+                        double wakeDirY = (wakeEndY - wakeStartY) / wakeLength;
+                        double projOntoWake = (x - wakeStartX) * wakeDirX + (y - wakeStartY) * wakeDirY;
+                        
+                        if (projOntoWake > 0 && projOntoWake < wakeLength) {
+                            double closestX = wakeStartX + projOntoWake * wakeDirX;
+                            double closestY = wakeStartY + projOntoWake * wakeDirY;
+                            double distToWake = sqrt((x - closestX) * (x - closestX) + (y - closestY) * (y - closestY));
+                            
+                            if (distToWake < _wakeWidth) {
+                                inWakeArea = true;
+                                wakeBlurAmount = _flowStrength * exp(-distToWake / (_wakeWidth * 0.4));
+                                double ageOfWake = 1.0 - (projOntoWake / wakeLength);
+                                wakeBlurAmount *= exp(-ageOfWake / _wakeDecayParam);
+                            }
+                        }
+                    }
+                }
+                
+                // Sample with bilinear interpolation or fluid diffusion
                 int srcXInt = (int)floor(srcX);
                 int srcYInt = (int)floor(srcY);
                 
@@ -381,13 +429,74 @@ private:
                     PIX *p01 = (PIX *) getSrcPixelAddress(srcXInt, srcYInt + 1);
                     PIX *p11 = (PIX *) getSrcPixelAddress(srcXInt + 1, srcYInt + 1);
                     
-                    // Bilinear interpolation
-                    for (int c = 0; c < nComponents; c++) {
-                        double interpolated = p00[c] * fx1 * fy1 +
-                                            p10[c] * fx * fy1 +
-                                            p01[c] * fx1 * fy +
-                                            p11[c] * fx * fy;
-                        dstPix[c] = (PIX)interpolated;
+                    // Use fluid diffusion sampling in wake areas
+                    if (inWakeArea && wakeBlurAmount > 0.01) {
+                        // Multi-sample for fluid diffusion effect
+                        double totalWeight = 0.0;
+                        double sampledColor[4] = {0.0, 0.0, 0.0, 0.0}; // Max 4 components
+                        
+                        // Sample multiple points around the source location for blur/diffusion
+                        int numSamples = 5; // Number of samples for diffusion
+                        double blurRadius = wakeBlurAmount * 3.0;
+                        
+                        for (int s = 0; s < numSamples; s++) {
+                            double angle = (s * 2.0 * M_PI) / numSamples;
+                            double sampleX = srcX + cos(angle) * blurRadius * ((double)s / numSamples);
+                            double sampleY = srcY + sin(angle) * blurRadius * ((double)s / numSamples);
+                            
+                            int sampleXInt = (int)floor(sampleX);
+                            int sampleYInt = (int)floor(sampleY);
+                            
+                            if (sampleXInt >= srcBounds.x1 && sampleXInt < srcBounds.x2-1 && 
+                                sampleYInt >= srcBounds.y1 && sampleYInt < srcBounds.y2-1) {
+                                
+                                double sfx = sampleX - sampleXInt;
+                                double sfy = sampleY - sampleYInt;
+                                double sfx1 = 1.0 - sfx;
+                                double sfy1 = 1.0 - sfy;
+                                
+                                PIX *sp00 = (PIX *) getSrcPixelAddress(sampleXInt, sampleYInt);
+                                PIX *sp10 = (PIX *) getSrcPixelAddress(sampleXInt + 1, sampleYInt);
+                                PIX *sp01 = (PIX *) getSrcPixelAddress(sampleXInt, sampleYInt + 1);
+                                PIX *sp11 = (PIX *) getSrcPixelAddress(sampleXInt + 1, sampleYInt + 1);
+                                
+                                double weight = 1.0; // Equal weight for now
+                                totalWeight += weight;
+                                
+                                for (int c = 0; c < nComponents; c++) {
+                                    double sampleValue = sp00[c] * sfx1 * sfy1 +
+                                                       sp10[c] * sfx * sfy1 +
+                                                       sp01[c] * sfx1 * sfy +
+                                                       sp11[c] * sfx * sfy;
+                                    sampledColor[c] += sampleValue * weight;
+                                }
+                            }
+                        }
+                        
+                        // Normalize and apply
+                        if (totalWeight > 0.001) {
+                            for (int c = 0; c < nComponents; c++) {
+                                dstPix[c] = (PIX)(sampledColor[c] / totalWeight);
+                            }
+                        } else {
+                            // Fallback to regular bilinear
+                            for (int c = 0; c < nComponents; c++) {
+                                double interpolated = p00[c] * fx1 * fy1 +
+                                                    p10[c] * fx * fy1 +
+                                                    p01[c] * fx1 * fy +
+                                                    p11[c] * fx * fy;
+                                dstPix[c] = (PIX)interpolated;
+                            }
+                        }
+                    } else {
+                        // Regular bilinear interpolation
+                        for (int c = 0; c < nComponents; c++) {
+                            double interpolated = p00[c] * fx1 * fy1 +
+                                                p10[c] * fx * fy1 +
+                                                p01[c] * fx1 * fy +
+                                                p11[c] * fx * fy;
+                            dstPix[c] = (PIX)interpolated;
+                        }
                     }
                 } else if (srcXInt >= srcBounds.x1 && srcXInt < srcBounds.x2 && 
                           srcYInt >= srcBounds.y1 && srcYInt < srcBounds.y2) {
