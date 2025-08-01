@@ -200,7 +200,10 @@ private:
                     double distance = sqrt(dx * dx + dy * dy);
                     
                     double angle = atan2(dy, dx);
-                    double swirlAngle = _swirlIntensity * exp(-distance / _decay);
+                    double swirlAngle = 0.0;
+                    if (_decay > 0.001) {
+                        swirlAngle = _swirlIntensity * exp(-distance / _decay);
+                    }
                     angle += swirlAngle;
                     
                     srcX = _centerX + distance * cos(angle);
@@ -213,7 +216,10 @@ private:
                     
                     // Distance from flow line (perpendicular distance)
                     double perpDist = fabs(dx * flowSin - dy * flowCos);
-                    double flowEffect = _flowStrength * exp(-perpDist / _wakeWidth);
+                    double flowEffect = 0.0;
+                    if (_wakeWidth > 0.001) {
+                        flowEffect = _flowStrength * exp(-perpDist / _wakeWidth);
+                    }
                     
                     // Apply flow displacement
                     srcX = x - flowEffect * flowCos;
@@ -241,7 +247,10 @@ private:
                     
                     // Vortex rotation (alternating direction)
                     double vortexAngle = atan2(vortexDy, vortexDx);
-                    double rotationStrength = _swirlIntensity * exp(-vortexDist / (_decay * 0.5));
+                    double rotationStrength = 0.0;
+                    if (_decay > 0.001) {
+                        rotationStrength = _swirlIntensity * exp(-vortexDist / (_decay * 0.5));
+                    }
                     if (vortexIndex % 2 == 1) rotationStrength = -rotationStrength;
                     vortexAngle += rotationStrength;
                     
@@ -254,7 +263,10 @@ private:
                     srcY = y - vortexDispX * flowCos + vortexDispY * flowSin;
                     
                     // Add directional flow component
-                    double flowEffect = _flowStrength * exp(-fabs(perpDist) / _wakeWidth);
+                    double flowEffect = 0.0;
+                    if (_wakeWidth > 0.001) {
+                        flowEffect = _flowStrength * exp(-fabs(perpDist) / _wakeWidth);
+                    }
                     srcX -= flowEffect * flowCos;
                     srcY -= flowEffect * flowSin;
                 }
@@ -330,12 +342,29 @@ void FluidSwirlPlugin::render(const OFX::RenderArguments &args)
            srcComponents == OFX::ePixelComponentRGB ||
            srcComponents == OFX::ePixelComponentAlpha);
 
+    // Handle RGBA formats
     if (srcBitDepth == OFX::eBitDepthUByte && srcComponents == OFX::ePixelComponentRGBA) {
         renderInternal<unsigned char, 4, 255>(args, srcBitDepth);
     } else if (srcBitDepth == OFX::eBitDepthUShort && srcComponents == OFX::ePixelComponentRGBA) {
         renderInternal<unsigned short, 4, 65535>(args, srcBitDepth);
     } else if (srcBitDepth == OFX::eBitDepthFloat && srcComponents == OFX::ePixelComponentRGBA) {
         renderInternal<float, 4, 1>(args, srcBitDepth);
+    }
+    // Handle RGB formats
+    else if (srcBitDepth == OFX::eBitDepthUByte && srcComponents == OFX::ePixelComponentRGB) {
+        renderInternal<unsigned char, 3, 255>(args, srcBitDepth);
+    } else if (srcBitDepth == OFX::eBitDepthUShort && srcComponents == OFX::ePixelComponentRGB) {
+        renderInternal<unsigned short, 3, 65535>(args, srcBitDepth);
+    } else if (srcBitDepth == OFX::eBitDepthFloat && srcComponents == OFX::ePixelComponentRGB) {
+        renderInternal<float, 3, 1>(args, srcBitDepth);
+    }
+    // Handle Alpha formats
+    else if (srcBitDepth == OFX::eBitDepthUByte && srcComponents == OFX::ePixelComponentAlpha) {
+        renderInternal<unsigned char, 1, 255>(args, srcBitDepth);
+    } else if (srcBitDepth == OFX::eBitDepthUShort && srcComponents == OFX::ePixelComponentAlpha) {
+        renderInternal<unsigned short, 1, 65535>(args, srcBitDepth);
+    } else if (srcBitDepth == OFX::eBitDepthFloat && srcComponents == OFX::ePixelComponentAlpha) {
+        renderInternal<float, 1, 1>(args, srcBitDepth);
     } else {
         OFX::throwSuiteStatusException(kOfxStatErrUnsupported);
     }
@@ -376,6 +405,13 @@ void FluidSwirlPlugin::setupAndProcess(FluidSwirlProcessorBase &processor,
     double swirlIntensity = _swirlIntensity->getValueAtTime(args.time);
     double centerX, centerY;
     _center->getValueAtTime(args.time, centerX, centerY);
+    
+    // Convert normalized coordinates to pixel coordinates
+    int imageWidth = srcBounds.x2 - srcBounds.x1;
+    int imageHeight = srcBounds.y2 - srcBounds.y1;
+    centerX = srcBounds.x1 + centerX * imageWidth;
+    centerY = srcBounds.y1 + centerY * imageHeight;
+    
     double radius = _radius->getValueAtTime(args.time);
     double decay = _decay->getValueAtTime(args.time);
     double flowDirection = _flowDirection->getValueAtTime(args.time);
@@ -383,6 +419,13 @@ void FluidSwirlPlugin::setupAndProcess(FluidSwirlProcessorBase &processor,
     double wakeWidth = _wakeWidth->getValueAtTime(args.time);
     double vortexSpacing = _vortexSpacing->getValueAtTime(args.time);
     int flowMode = _flowMode->getValueAtTime(args.time);
+    
+    // Scale parameters to image size (assuming 1920x1080 reference)
+    double scale = sqrt((double)imageWidth * imageWidth + (double)imageHeight * imageHeight) / sqrt(1920.0 * 1920.0 + 1080.0 * 1080.0);
+    radius *= scale;
+    decay *= scale;
+    wakeWidth *= scale;
+    vortexSpacing *= scale;
 
     processor.setDstImg(dst.get());
     processor.setSrcImg(src.get());
