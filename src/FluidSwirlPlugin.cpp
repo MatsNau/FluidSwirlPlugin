@@ -54,6 +54,26 @@
 #define kParamFlowModeLabel "Flow Mode"
 #define kParamFlowModeHint "Type of flow pattern"
 
+#define kParamProjectileStart "projectileStart"
+#define kParamProjectileStartLabel "Projectile Start"
+#define kParamProjectileStartHint "Starting position of the projectile"
+
+#define kParamProjectileEnd "projectileEnd"
+#define kParamProjectileEndLabel "Projectile End"
+#define kParamProjectileEndHint "Ending position of the projectile"
+
+#define kParamProjectileSpeed "projectileSpeed"
+#define kParamProjectileSpeedLabel "Projectile Speed"
+#define kParamProjectileSpeedHint "Speed of projectile movement (frames to cross screen)"
+
+#define kParamProjectileRadius "projectileRadius"
+#define kParamProjectileRadiusLabel "Impact Radius"
+#define kParamProjectileRadiusHint "Radius of displacement around projectile"
+
+#define kParamWakeDecay "wakeDecay"
+#define kParamWakeDecayLabel "Wake Decay"
+#define kParamWakeDecayHint "How quickly the wake trail fades behind projectile"
+
 using namespace OFX;
 
 // Forward declaration
@@ -74,6 +94,13 @@ protected:
     OFX::DoubleParam *_wakeWidth;
     OFX::DoubleParam *_vortexSpacing;
     OFX::ChoiceParam *_flowMode;
+    
+    // Projectile parameters
+    OFX::Double2DParam *_projectileStart;
+    OFX::Double2DParam *_projectileEnd;
+    OFX::DoubleParam *_projectileSpeed;
+    OFX::DoubleParam *_projectileRadius;
+    OFX::DoubleParam *_wakeDecay;
 
 public:
     FluidSwirlPlugin(OfxImageEffectHandle handle) : ImageEffect(handle), _dstClip(0), _srcClip(0)
@@ -91,8 +118,16 @@ public:
         _vortexSpacing = fetchDoubleParam(kParamVortexSpacing);
         _flowMode = fetchChoiceParam(kParamFlowMode);
         
+        // Projectile parameters
+        _projectileStart = fetchDouble2DParam(kParamProjectileStart);
+        _projectileEnd = fetchDouble2DParam(kParamProjectileEnd);
+        _projectileSpeed = fetchDoubleParam(kParamProjectileSpeed);
+        _projectileRadius = fetchDoubleParam(kParamProjectileRadius);
+        _wakeDecay = fetchDoubleParam(kParamWakeDecay);
+        
         assert(_dstClip && _swirlIntensity && _center && _radius && _decay && 
-               _flowDirection && _flowStrength && _wakeWidth && _vortexSpacing && _flowMode);
+               _flowDirection && _flowStrength && _wakeWidth && _vortexSpacing && _flowMode &&
+               _projectileStart && _projectileEnd && _projectileSpeed && _projectileRadius && _wakeDecay);
     }
 
 private:
@@ -124,6 +159,14 @@ protected:
     double _vortexSpacing;
     int _flowMode;
     
+    // Projectile parameters
+    double _projectileStartX, _projectileStartY;
+    double _projectileEndX, _projectileEndY;
+    double _projectileSpeed;
+    double _projectileRadius;
+    double _wakeDecayParam;
+    double _currentTime;
+    
     OFX::ImageEffect &_effect;
     const OFX::Image *_srcImg;
     OFX::Image *_dstImg;
@@ -138,7 +181,9 @@ public:
     void process() { multiThreadProcessImages(_renderWindow); }
     
     void setSwirlParams(double intensity, double centerX, double centerY, double radius, double decay,
-                       double flowDirection, double flowStrength, double wakeWidth, double vortexSpacing, int flowMode)
+                       double flowDirection, double flowStrength, double wakeWidth, double vortexSpacing, int flowMode,
+                       double projStartX, double projStartY, double projEndX, double projEndY, 
+                       double projSpeed, double projRadius, double wakeDecay, double currentTime)
     {
         _swirlIntensity = intensity;
         _centerX = centerX;
@@ -150,6 +195,16 @@ public:
         _wakeWidth = wakeWidth;
         _vortexSpacing = vortexSpacing;
         _flowMode = flowMode;
+        
+        // Projectile parameters
+        _projectileStartX = projStartX;
+        _projectileStartY = projStartY;
+        _projectileEndX = projEndX;
+        _projectileEndY = projEndY;
+        _projectileSpeed = projSpeed;
+        _projectileRadius = projRadius;
+        _wakeDecayParam = wakeDecay;
+        _currentTime = currentTime;
     }
     
 protected:
@@ -226,49 +281,82 @@ private:
                     srcY = y - flowEffect * flowSin;
                     
                 } else if (applyEffect && _flowMode == 2) {
-                    // Boat wake with alternating vortices
-                    double dx = x - _centerX;
-                    double dy = y - _centerY;
+                    // Projectile Wake Effect - like a bullet flying through fluid
                     
-                    // Distance along flow direction
-                    double alongFlow = dx * flowCos + dy * flowSin;
-                    // Distance perpendicular to flow
-                    double perpDist = dx * flowSin - dy * flowCos;
+                    // Calculate projectile position based on time
+                    double progress = (_currentTime / _projectileSpeed);
+                    double projectileX = _projectileStartX + progress * (_projectileEndX - _projectileStartX);
+                    double projectileY = _projectileStartY + progress * (_projectileEndY - _projectileStartY);
                     
-                    // Create alternating vortices (von Kármán vortex street)
-                    double vortexPhase = alongFlow / _vortexSpacing;
-                    int vortexIndex = (int)floor(vortexPhase);
-                    double vortexOffset = (vortexIndex % 2 == 0) ? _wakeWidth * 0.3 : -_wakeWidth * 0.3;
+                    // Distance from current projectile position
+                    double dx = x - projectileX;
+                    double dy = y - projectileY;
+                    double distanceFromProjectile = sqrt(dx * dx + dy * dy);
                     
-                    // Distance from vortex center
-                    double vortexDx = perpDist - vortexOffset;
-                    double vortexDy = (vortexPhase - vortexIndex) * _vortexSpacing - _vortexSpacing * 0.5;
-                    double vortexDist = sqrt(vortexDx * vortexDx + vortexDy * vortexDy);
-                    
-                    // Vortex rotation (alternating direction)
-                    double vortexAngle = atan2(vortexDy, vortexDx);
-                    double rotationStrength = 0.0;
-                    if (_decay > 0.001) {
-                        rotationStrength = _swirlIntensity * exp(-vortexDist / (_decay * 0.5));
+                    // Calculate displacement field around projectile
+                    if (distanceFromProjectile < _projectileRadius && distanceFromProjectile > 0.1) {
+                        // Strong displacement field - pull pixels toward projectile trajectory
+                        double projDirX = _projectileEndX - _projectileStartX;
+                        double projDirY = _projectileEndY - _projectileStartY;
+                        double projDirLength = sqrt(projDirX * projDirX + projDirY * projDirY);
+                        if (projDirLength > 0.001) {
+                            projDirX /= projDirLength;
+                            projDirY /= projDirLength;
+                        }
+                        
+                        // Calculate displacement strength (stronger closer to projectile)
+                        double falloff = exp(-distanceFromProjectile / (_projectileRadius * 0.3));
+                        double displacement = _swirlIntensity * 50.0 * falloff;
+                        
+                        // Pull pixels in projectile direction with some perpendicular swirl
+                        double perpX = -projDirY; // Perpendicular to projectile direction
+                        double perpY = projDirX;
+                        
+                        // Add rotational component based on distance from trajectory line
+                        double perpDist = fabs(dx * perpX + dy * perpY);
+                        double swirlAmount = displacement * 0.5 * sin(perpDist * 0.1);
+                        
+                        srcX = x + projDirX * displacement + perpX * swirlAmount;
+                        srcY = y + projDirY * displacement + perpY * swirlAmount;
                     }
-                    if (vortexIndex % 2 == 1) rotationStrength = -rotationStrength;
-                    vortexAngle += rotationStrength;
                     
-                    // Apply vortex displacement
-                    double vortexDispX = vortexDist * cos(vortexAngle) - vortexDx;
-                    double vortexDispY = vortexDist * sin(vortexAngle) - vortexDy;
+                    // Add wake trail effect - disturbance behind projectile
+                    double wakeStartX = _projectileStartX;
+                    double wakeStartY = _projectileStartY;
+                    double wakeEndX = projectileX;
+                    double wakeEndY = projectileY;
                     
-                    // Transform back to image coordinates
-                    srcX = x + vortexDispX * flowSin + vortexDispY * flowCos;
-                    srcY = y - vortexDispX * flowCos + vortexDispY * flowSin;
-                    
-                    // Add directional flow component
-                    double flowEffect = 0.0;
-                    if (_wakeWidth > 0.001) {
-                        flowEffect = _flowStrength * exp(-fabs(perpDist) / _wakeWidth);
+                    // Distance to wake trail line
+                    double wakeLength = sqrt((wakeEndX - wakeStartX) * (wakeEndX - wakeStartX) + 
+                                           (wakeEndY - wakeStartY) * (wakeEndY - wakeStartY));
+                    if (wakeLength > 0.001) {
+                        double wakeDirX = (wakeEndX - wakeStartX) / wakeLength;
+                        double wakeDirY = (wakeEndY - wakeStartY) / wakeLength;
+                        
+                        // Project point onto wake line
+                        double projOntoWake = (x - wakeStartX) * wakeDirX + (y - wakeStartY) * wakeDirY;
+                        
+                        if (projOntoWake > 0 && projOntoWake < wakeLength) {
+                            double closestX = wakeStartX + projOntoWake * wakeDirX;
+                            double closestY = wakeStartY + projOntoWake * wakeDirY;
+                            
+                            double distToWake = sqrt((x - closestX) * (x - closestX) + (y - closestY) * (y - closestY));
+                            
+                            if (distToWake < _wakeWidth) {
+                                // Wake trail effect - turbulent disturbance
+                                double wakeStrength = _flowStrength * exp(-distToWake / (_wakeWidth * 0.5));
+                                double ageOfWake = 1.0 - (projOntoWake / wakeLength); // Newer wake is stronger
+                                wakeStrength *= exp(-ageOfWake / _wakeDecayParam);
+                                
+                                // Add turbulent displacement
+                                double turbulentX = sin(distToWake * 0.3 + projOntoWake * 0.1) * wakeStrength;
+                                double turbulentY = cos(distToWake * 0.2 + projOntoWake * 0.15) * wakeStrength;
+                                
+                                srcX += turbulentX;
+                                srcY += turbulentY;
+                            }
+                        }
                     }
-                    srcX -= flowEffect * flowCos;
-                    srcY -= flowEffect * flowSin;
                 }
                 
                 // Sample with bilinear interpolation
@@ -420,18 +508,36 @@ void FluidSwirlPlugin::setupAndProcess(FluidSwirlProcessorBase &processor,
     double vortexSpacing = _vortexSpacing->getValueAtTime(args.time);
     int flowMode = _flowMode->getValueAtTime(args.time);
     
+    // Get projectile parameters
+    double projectileStartX, projectileStartY;
+    _projectileStart->getValueAtTime(args.time, projectileStartX, projectileStartY);
+    double projectileEndX, projectileEndY;
+    _projectileEnd->getValueAtTime(args.time, projectileEndX, projectileEndY);
+    double projectileSpeed = _projectileSpeed->getValueAtTime(args.time);
+    double projectileRadius = _projectileRadius->getValueAtTime(args.time);
+    double wakeDecay = _wakeDecay->getValueAtTime(args.time);
+    
+    // Convert normalized projectile coordinates to pixel coordinates
+    projectileStartX = srcBounds.x1 + projectileStartX * imageWidth;
+    projectileStartY = srcBounds.y1 + projectileStartY * imageHeight;
+    projectileEndX = srcBounds.x1 + projectileEndX * imageWidth;
+    projectileEndY = srcBounds.y1 + projectileEndY * imageHeight;
+    
     // Scale parameters to image size (assuming 1920x1080 reference)
     double scale = sqrt((double)imageWidth * imageWidth + (double)imageHeight * imageHeight) / sqrt(1920.0 * 1920.0 + 1080.0 * 1080.0);
     radius *= scale;
     decay *= scale;
     wakeWidth *= scale;
     vortexSpacing *= scale;
+    projectileRadius *= scale;
 
     processor.setDstImg(dst.get());
     processor.setSrcImg(src.get());
     processor.setRenderWindow(args.renderWindow);
     processor.setSwirlParams(swirlIntensity, centerX, centerY, radius, decay,
-                           flowDirection, flowStrength, wakeWidth, vortexSpacing, flowMode);
+                           flowDirection, flowStrength, wakeWidth, vortexSpacing, flowMode,
+                           projectileStartX, projectileStartY, projectileEndX, projectileEndY,
+                           projectileSpeed, projectileRadius, wakeDecay, args.time);
     
     processor.process();
 }
@@ -581,7 +687,7 @@ void FluidSwirlPluginFactory::describeInContext(OFX::ImageEffectDescriptor &desc
     choiceParam->setHint(kParamFlowModeHint);
     choiceParam->appendOption("Radial Swirl", "Classic radial swirl from center point");
     choiceParam->appendOption("Directional Flow", "Unidirectional fluid flow");
-    choiceParam->appendOption("Boat Wake", "Boat wake with alternating vortices");
+    choiceParam->appendOption("Projectile Wake", "Bullet-like projectile flying through fluid with wake trail");
     choiceParam->setDefault(0);
     if (page) {
         page->addChild(*choiceParam);
@@ -630,6 +736,62 @@ void FluidSwirlPluginFactory::describeInContext(OFX::ImageEffectDescriptor &desc
     param->setDefault(80.0);
     param->setRange(10.0, 300.0);
     param->setDisplayRange(20.0, 150.0);
+    param->setDoubleType(OFX::eDoubleTypePlain);
+    if (page) {
+        page->addChild(*param);
+    }
+
+    // Projectile Start Position
+    OFX::Double2DParamDescriptor *projectileStartParam = desc.defineDouble2DParam(kParamProjectileStart);
+    projectileStartParam->setLabel(kParamProjectileStartLabel);
+    projectileStartParam->setHint(kParamProjectileStartHint);
+    projectileStartParam->setDefault(0.1, 0.5);
+    projectileStartParam->setDoubleType(OFX::eDoubleTypeNormalisedXYAbsolute);
+    if (page) {
+        page->addChild(*projectileStartParam);
+    }
+
+    // Projectile End Position
+    OFX::Double2DParamDescriptor *projectileEndParam = desc.defineDouble2DParam(kParamProjectileEnd);
+    projectileEndParam->setLabel(kParamProjectileEndLabel);
+    projectileEndParam->setHint(kParamProjectileEndHint);
+    projectileEndParam->setDefault(0.9, 0.5);
+    projectileEndParam->setDoubleType(OFX::eDoubleTypeNormalisedXYAbsolute);
+    if (page) {
+        page->addChild(*projectileEndParam);
+    }
+
+    // Projectile Speed
+    param = desc.defineDoubleParam(kParamProjectileSpeed);
+    param->setLabel(kParamProjectileSpeedLabel);
+    param->setHint(kParamProjectileSpeedHint);
+    param->setDefault(30.0);
+    param->setRange(5.0, 200.0);
+    param->setDisplayRange(10.0, 100.0);
+    param->setDoubleType(OFX::eDoubleTypePlain);
+    if (page) {
+        page->addChild(*param);
+    }
+
+    // Projectile Impact Radius
+    param = desc.defineDoubleParam(kParamProjectileRadius);
+    param->setLabel(kParamProjectileRadiusLabel);
+    param->setHint(kParamProjectileRadiusHint);
+    param->setDefault(80.0);
+    param->setRange(10.0, 300.0);
+    param->setDisplayRange(20.0, 150.0);
+    param->setDoubleType(OFX::eDoubleTypePlain);
+    if (page) {
+        page->addChild(*param);
+    }
+
+    // Wake Decay
+    param = desc.defineDoubleParam(kParamWakeDecay);
+    param->setLabel(kParamWakeDecayLabel);
+    param->setHint(kParamWakeDecayHint);
+    param->setDefault(0.5);
+    param->setRange(0.1, 2.0);
+    param->setDisplayRange(0.2, 1.5);
     param->setDoubleType(OFX::eDoubleTypePlain);
     if (page) {
         page->addChild(*param);

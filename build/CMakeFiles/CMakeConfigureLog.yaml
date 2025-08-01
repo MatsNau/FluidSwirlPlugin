@@ -24,7 +24,7 @@ events:
       The output was:
       0
       MSBuild-Version 17.14.8+a7a4d5af0 f├╝r .NET Framework
-      Der Buildvorgang wurde am 01.08.2025 09:43:03 gestartet.
+      Der Buildvorgang wurde am 01.08.2025 10:12:39 gestartet.
       
       Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\3.31.6-msvc6\\CompilerIdC\\CompilerIdC.vcxproj" auf Knoten "1" (Standardziele).
       PrepareForBuild:
@@ -62,7 +62,7 @@ events:
           0 Warnung(en)
           0 Fehler
       
-      Verstrichene Zeit 00:00:01.64
+      Verstrichene Zeit 00:00:01.26
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -88,7 +88,7 @@ events:
       The output was:
       0
       MSBuild-Version 17.14.8+a7a4d5af0 f├╝r .NET Framework
-      Der Buildvorgang wurde am 01.08.2025 09:43:05 gestartet.
+      Der Buildvorgang wurde am 01.08.2025 10:12:41 gestartet.
       
       Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\3.31.6-msvc6\\CompilerIdCXX\\CompilerIdCXX.vcxproj" auf Knoten "1" (Standardziele).
       PrepareForBuild:
@@ -126,7 +126,7 @@ events:
           0 Warnung(en)
           0 Fehler
       
-      Verstrichene Zeit 00:00:01.17
+      Verstrichene Zeit 00:00:01.21
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -145,8 +145,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-zhats4"
-      binary: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-zhats4"
+      source: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-d4dyhx"
+      binary: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-d4dyhx"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -155,49 +155,49 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-zhats4'
+        Change Dir: 'C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-d4dyhx'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Professional/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_880b6.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Professional/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_a3d6a.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild-Version 17.14.8+a7a4d5af0 f├╝r .NET Framework
-        Der Buildvorgang wurde am 01.08.2025 09:43:07 gestartet.
+        Der Buildvorgang wurde am 01.08.2025 10:12:42 gestartet.
         
-        Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\cmTC_880b6.vcxproj" auf Knoten "1" (Standardziele).
+        Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\cmTC_a3d6a.vcxproj" auf Knoten "1" (Standardziele).
         PrepareForBuild:
-          Das Verzeichnis "cmTC_880b6.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_a3d6a.dir\\Debug\\" wird erstellt.
           Die strukturierte Ausgabe ist aktiviert. Die Formatierung der Compilerdiagnose spiegelt die Fehlerhierarchie wider. Weitere Informationen finden Sie unter https://aka.ms/cpp/structured-output.
-          Das Verzeichnis "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\Debug\\" wird erstellt.
-          Das Verzeichnis "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\" wird erstellt.
+          Das Verzeichnis "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\" wird erstellt.
         InitializeBuildStatus:
-          "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
-          Aktualisieren des Timestamps von "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\unsuccessfulbuild".
+          "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+          Aktualisieren des Timestamps von "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\unsuccessfulbuild".
         VcpkgTripletSelection:
           Using triplet "x64-windows" from "C:\\vcpkg\\installed\\x64-windows\\"
           Using normalized configuration "Debug"
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_880b6.dir\\Debug\\\\" /Fd"cmTC_880b6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a3d6a.dir\\Debug\\\\" /Fd"cmTC_a3d6a.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++-Optimierungscompiler Version 19.44.35207.1 f├╝r x64
           Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
-          cl /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_880b6.dir\\Debug\\\\" /Fd"cmTC_880b6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
+          cl /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a3d6a.dir\\Debug\\\\" /Fd"cmTC_a3d6a.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\Debug\\cmTC_880b6.exe" /INCREMENTAL /ILK:"cmTC_880b6.dir\\Debug\\cmTC_880b6.ilk" /NOLOGO /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-zhats4/Debug/cmTC_880b6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-zhats4/Debug/cmTC_880b6.lib" /MACHINE:X64  /machine:x64 cmTC_880b6.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_880b6.vcxproj -> C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\Debug\\cmTC_880b6.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\Debug\\cmTC_a3d6a.exe" /INCREMENTAL /ILK:"cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.ilk" /NOLOGO /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-d4dyhx/Debug/cmTC_a3d6a.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-d4dyhx/Debug/cmTC_a3d6a.lib" /MACHINE:X64  /machine:x64 cmTC_a3d6a.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_a3d6a.vcxproj -> C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\Debug\\cmTC_a3d6a.exe
         AppLocalFromInstalled:
-          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\Debug\\cmTC_880b6.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\cmTC_880b6.write.1u.tlog" "cmTC_880b6.dir\\Debug\\vcpkg.applocal.log"
+          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\Debug\\cmTC_a3d6a.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\cmTC_a3d6a.write.1u.tlog" "cmTC_a3d6a.dir\\Debug\\vcpkg.applocal.log"
           Der Befehl "pwsh.exe" ist entweder falsch geschrieben oder
           konnte nicht gefunden werden.
-          Der Befehl "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\Debug\\cmTC_880b6.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\cmTC_880b6.write.1u.tlog" "cmTC_880b6.dir\\Debug\\vcpkg.applocal.log"" wurde mit dem Code 9009 beendet.
-          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\Debug\\cmTC_880b6.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\cmTC_880b6.write.1u.tlog" "cmTC_880b6.dir\\Debug\\vcpkg.applocal.log"
+          Der Befehl "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\Debug\\cmTC_a3d6a.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\cmTC_a3d6a.write.1u.tlog" "cmTC_a3d6a.dir\\Debug\\vcpkg.applocal.log"" wurde mit dem Code 9009 beendet.
+          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\Debug\\cmTC_a3d6a.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\cmTC_a3d6a.write.1u.tlog" "cmTC_a3d6a.dir\\Debug\\vcpkg.applocal.log"
         FinalizeBuildStatus:
-          Die Datei "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\unsuccessfulbuild" wird gel├Âscht.
-          Aktualisieren des Timestamps von "cmTC_880b6.dir\\Debug\\cmTC_880b6.tlog\\cmTC_880b6.lastbuildstate".
-        Die Erstellung von Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-zhats4\\cmTC_880b6.vcxproj" ist abgeschlossen (Standardziele).
+          Die Datei "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\unsuccessfulbuild" wird gel├Âscht.
+          Aktualisieren des Timestamps von "cmTC_a3d6a.dir\\Debug\\cmTC_a3d6a.tlog\\cmTC_a3d6a.lastbuildstate".
+        Die Erstellung von Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-d4dyhx\\cmTC_a3d6a.vcxproj" ist abgeschlossen (Standardziele).
         
         Der Buildvorgang wurde erfolgreich ausgef├╝hrt.
             0 Warnung(en)
             0 Fehler
         
-        Verstrichene Zeit 00:00:01.18
+        Verstrichene Zeit 00:00:01.25
         
       exitCode: 0
   -
@@ -237,8 +237,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-35mwbj"
-      binary: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-35mwbj"
+      source: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-avhri2"
+      binary: "C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-avhri2"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -248,49 +248,49 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-35mwbj'
+        Change Dir: 'C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-avhri2'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Professional/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_e4bb0.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Professional/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_4249d.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild-Version 17.14.8+a7a4d5af0 f├╝r .NET Framework
-        Der Buildvorgang wurde am 01.08.2025 09:43:09 gestartet.
+        Der Buildvorgang wurde am 01.08.2025 10:12:44 gestartet.
         
-        Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\cmTC_e4bb0.vcxproj" auf Knoten "1" (Standardziele).
+        Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\cmTC_4249d.vcxproj" auf Knoten "1" (Standardziele).
         PrepareForBuild:
-          Das Verzeichnis "cmTC_e4bb0.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_4249d.dir\\Debug\\" wird erstellt.
           Die strukturierte Ausgabe ist aktiviert. Die Formatierung der Compilerdiagnose spiegelt die Fehlerhierarchie wider. Weitere Informationen finden Sie unter https://aka.ms/cpp/structured-output.
-          Das Verzeichnis "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\Debug\\" wird erstellt.
-          Das Verzeichnis "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\" wird erstellt.
+          Das Verzeichnis "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\" wird erstellt.
         InitializeBuildStatus:
-          "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
-          Aktualisieren des Timestamps von "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\unsuccessfulbuild".
+          "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+          Aktualisieren des Timestamps von "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\unsuccessfulbuild".
         VcpkgTripletSelection:
           Using triplet "x64-windows" from "C:\\vcpkg\\installed\\x64-windows\\"
           Using normalized configuration "Debug"
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_e4bb0.dir\\Debug\\\\" /Fd"cmTC_e4bb0.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_4249d.dir\\Debug\\\\" /Fd"cmTC_4249d.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++-Optimierungscompiler Version 19.44.35207.1 f├╝r x64
           Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
-          cl /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_e4bb0.dir\\Debug\\\\" /Fd"cmTC_e4bb0.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /I"C:\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_4249d.dir\\Debug\\\\" /Fd"cmTC_4249d.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\Debug\\cmTC_e4bb0.exe" /INCREMENTAL /ILK:"cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.ilk" /NOLOGO /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-35mwbj/Debug/cmTC_e4bb0.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-35mwbj/Debug/cmTC_e4bb0.lib" /MACHINE:X64  /machine:x64 cmTC_e4bb0.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_e4bb0.vcxproj -> C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\Debug\\cmTC_e4bb0.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\Debug\\cmTC_4249d.exe" /INCREMENTAL /ILK:"cmTC_4249d.dir\\Debug\\cmTC_4249d.ilk" /NOLOGO /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-avhri2/Debug/cmTC_4249d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/PersonalProj/FluidSwirlPlugin/build/CMakeFiles/CMakeScratch/TryCompile-avhri2/Debug/cmTC_4249d.lib" /MACHINE:X64  /machine:x64 cmTC_4249d.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_4249d.vcxproj -> C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\Debug\\cmTC_4249d.exe
         AppLocalFromInstalled:
-          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\Debug\\cmTC_e4bb0.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\cmTC_e4bb0.write.1u.tlog" "cmTC_e4bb0.dir\\Debug\\vcpkg.applocal.log"
+          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\Debug\\cmTC_4249d.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\cmTC_4249d.write.1u.tlog" "cmTC_4249d.dir\\Debug\\vcpkg.applocal.log"
           Der Befehl "pwsh.exe" ist entweder falsch geschrieben oder
           konnte nicht gefunden werden.
-          Der Befehl "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\Debug\\cmTC_e4bb0.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\cmTC_e4bb0.write.1u.tlog" "cmTC_e4bb0.dir\\Debug\\vcpkg.applocal.log"" wurde mit dem Code 9009 beendet.
-          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\Debug\\cmTC_e4bb0.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\cmTC_e4bb0.write.1u.tlog" "cmTC_e4bb0.dir\\Debug\\vcpkg.applocal.log"
+          Der Befehl "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\Debug\\cmTC_4249d.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\cmTC_4249d.write.1u.tlog" "cmTC_4249d.dir\\Debug\\vcpkg.applocal.log"" wurde mit dem Code 9009 beendet.
+          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\Debug\\cmTC_4249d.exe" "C:\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\cmTC_4249d.write.1u.tlog" "cmTC_4249d.dir\\Debug\\vcpkg.applocal.log"
         FinalizeBuildStatus:
-          Die Datei "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\unsuccessfulbuild" wird gel├Âscht.
-          Aktualisieren des Timestamps von "cmTC_e4bb0.dir\\Debug\\cmTC_e4bb0.tlog\\cmTC_e4bb0.lastbuildstate".
-        Die Erstellung von Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-35mwbj\\cmTC_e4bb0.vcxproj" ist abgeschlossen (Standardziele).
+          Die Datei "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\unsuccessfulbuild" wird gel├Âscht.
+          Aktualisieren des Timestamps von "cmTC_4249d.dir\\Debug\\cmTC_4249d.tlog\\cmTC_4249d.lastbuildstate".
+        Die Erstellung von Projekt "C:\\PersonalProj\\FluidSwirlPlugin\\build\\CMakeFiles\\CMakeScratch\\TryCompile-avhri2\\cmTC_4249d.vcxproj" ist abgeschlossen (Standardziele).
         
         Der Buildvorgang wurde erfolgreich ausgef├╝hrt.
             0 Warnung(en)
             0 Fehler
         
-        Verstrichene Zeit 00:00:01.30
+        Verstrichene Zeit 00:00:01.27
         
       exitCode: 0
   -
