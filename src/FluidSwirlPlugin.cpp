@@ -346,9 +346,9 @@ private:
                         // Pull pixels STRONGLY in projectile direction
                         double totalDisplacement = baseDisplacement + suctionEffect;
                         
-                        // Directional pulling with enhanced strength
-                        srcX += projDirX * totalDisplacement;
-                        srcY += projDirY * totalDisplacement;
+                        // Directional pulling - REVERSED to create forward-flowing streaks
+                        srcX -= projDirX * totalDisplacement; // NEGATIVE = sample from behind projectile
+                        srcY -= projDirY * totalDisplacement; // NEGATIVE = sample from behind projectile
                         
                         // Add some perpendicular swirl (but less than before)
                         double perpX = -projDirY;
@@ -359,11 +359,11 @@ private:
                         srcX += perpX * swirlAmount;
                         srcY += perpY * swirlAmount;
                         
-                        // Additional "vacuum" effect - pull pixels from behind the projectile
+                        // Additional "vacuum" effect - sample from even further behind for forward streaks
                         if ((dx * projDirX + dy * projDirY) < 0) { // Behind projectile
                             double vacuumPull = _swirlIntensity * 30.0 * falloff;
-                            srcX += projDirX * vacuumPull;
-                            srcY += projDirY * vacuumPull;
+                            srcX -= projDirX * vacuumPull; // NEGATIVE = sample from further behind
+                            srcY -= projDirY * vacuumPull; // NEGATIVE = sample from further behind
                         }
                     }
                     
@@ -406,14 +406,14 @@ private:
                                 
                                 double totalStreakDistance = baseStreakDistance * streakMultiplier * ageBoost;
                                 
-                                // Apply massive directional streaking
-                                srcX += wakeDirX * totalStreakDistance * (1.0 + sin(distToWake * 0.08) * 0.4);
-                                srcY += wakeDirY * totalStreakDistance * (1.0 + cos(distToWake * 0.08) * 0.4);
+                                // Apply massive directional streaking - REVERSED to follow projectile direction
+                                srcX -= wakeDirX * totalStreakDistance * (1.0 + sin(distToWake * 0.08) * 0.4); // NEGATIVE = pull FROM behind
+                                srcY -= wakeDirY * totalStreakDistance * (1.0 + cos(distToWake * 0.08) * 0.4); // NEGATIVE = pull FROM behind
                                 
-                                // Add additional "drag" effect - pull pixels along the entire wake
+                                // Add additional "drag" effect - pull pixels FROM behind TO front
                                 double dragEffect = wakeStrength * 25.0 * (1.0 - ageOfWake * 0.5);
-                                srcX += wakeDirX * dragEffect;
-                                srcY += wakeDirY * dragEffect;
+                                srcX -= wakeDirX * dragEffect; // NEGATIVE = sample from behind
+                                srcY -= wakeDirY * dragEffect; // NEGATIVE = sample from behind
                                 
                                 // Reduced perpendicular diffusion (focus on longitudinal streaking)
                                 double perpX = -wakeDirY;
