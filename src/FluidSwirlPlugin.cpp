@@ -1,6 +1,7 @@
 #include "ofxsImageEffect.h"
 #include "ofxsMultiThread.h"
 #include <cmath>
+#include <algorithm>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -189,7 +190,10 @@ private:
                 double srcX = x;
                 double srcY = y;
                 
-                if (_flowMode == 0) {
+                // Check if effect is strong enough to apply
+                bool applyEffect = (fabs(_swirlIntensity) > 0.001 || fabs(_flowStrength) > 0.001);
+                
+                if (applyEffect && _flowMode == 0) {
                     // Original radial swirl
                     double dx = x - _centerX;
                     double dy = y - _centerY;
@@ -202,7 +206,7 @@ private:
                     srcX = _centerX + distance * cos(angle);
                     srcY = _centerY + distance * sin(angle);
                     
-                } else if (_flowMode == 1) {
+                } else if (applyEffect && _flowMode == 1) {
                     // Directional flow
                     double dx = x - _centerX;
                     double dy = y - _centerY;
@@ -215,7 +219,7 @@ private:
                     srcX = x - flowEffect * flowCos;
                     srcY = y - flowEffect * flowSin;
                     
-                } else if (_flowMode == 2) {
+                } else if (applyEffect && _flowMode == 2) {
                     // Boat wake with alternating vortices
                     double dx = x - _centerX;
                     double dy = y - _centerY;
@@ -293,10 +297,21 @@ private:
                         dstPix[c] = srcPix[c];
                     }
                 } else {
-                    // For completely out-of-bounds pixels, copy original pixel (passthrough)
-                    PIX *srcPix = (PIX *) getSrcPixelAddress(x, y);
-                    for (int c = 0; c < nComponents; c++) {
-                        dstPix[c] = srcPix[c];
+                    // For completely out-of-bounds pixels, use transparent black or edge clamping
+                    if (x >= srcBounds.x1 && x < srcBounds.x2 && y >= srcBounds.y1 && y < srcBounds.y2) {
+                        // If original position is valid, use it
+                        PIX *srcPix = (PIX *) getSrcPixelAddress(x, y);
+                        for (int c = 0; c < nComponents; c++) {
+                            dstPix[c] = srcPix[c];
+                        }
+                    } else {
+                        // Clamp to nearest edge pixel
+                        int clampX = std::max(srcBounds.x1, std::min(srcBounds.x2-1, srcXInt));
+                        int clampY = std::max(srcBounds.y1, std::min(srcBounds.y2-1, srcYInt));
+                        PIX *srcPix = (PIX *) getSrcPixelAddress(clampX, clampY);
+                        for (int c = 0; c < nComponents; c++) {
+                            dstPix[c] = srcPix[c];
+                        }
                     }
                 }
                 
