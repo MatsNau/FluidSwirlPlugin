@@ -259,8 +259,12 @@ private:
                 int srcXInt = (int)floor(srcX);
                 int srcYInt = (int)floor(srcY);
                 
-                if (srcXInt >= procWindow.x1 && srcXInt < procWindow.x2-1 && 
-                    srcYInt >= procWindow.y1 && srcYInt < procWindow.y2-1) {
+                // Get source image bounds
+                OfxRectI srcBounds = _srcImg->getBounds();
+                
+                // Check if we can do bilinear interpolation (need all 4 pixels)
+                if (srcXInt >= srcBounds.x1 && srcXInt < srcBounds.x2-1 && 
+                    srcYInt >= srcBounds.y1 && srcYInt < srcBounds.y2-1) {
                     
                     double fx = srcX - srcXInt;
                     double fy = srcY - srcYInt;
@@ -281,10 +285,18 @@ private:
                                             p11[c] * fx * fy;
                         dstPix[c] = (PIX)interpolated;
                     }
-                } else {
-                    // Black for out-of-bounds pixels
+                } else if (srcXInt >= srcBounds.x1 && srcXInt < srcBounds.x2 && 
+                          srcYInt >= srcBounds.y1 && srcYInt < srcBounds.y2) {
+                    // Nearest neighbor for edge pixels
+                    PIX *srcPix = (PIX *) getSrcPixelAddress(srcXInt, srcYInt);
                     for (int c = 0; c < nComponents; c++) {
-                        dstPix[c] = 0;
+                        dstPix[c] = srcPix[c];
+                    }
+                } else {
+                    // For completely out-of-bounds pixels, copy original pixel (passthrough)
+                    PIX *srcPix = (PIX *) getSrcPixelAddress(x, y);
+                    for (int c = 0; c < nComponents; c++) {
+                        dstPix[c] = srcPix[c];
                     }
                 }
                 
@@ -325,10 +337,23 @@ void FluidSwirlPlugin::renderInternal(const OFX::RenderArguments &args,
 void FluidSwirlPlugin::setupAndProcess(FluidSwirlProcessorBase &processor,
                                       const OFX::RenderArguments &args)
 {
+    // Check if clips are connected
+    if (!_srcClip || !_srcClip->isConnected()) {
+        OFX::throwSuiteStatusException(kOfxStatFailed);
+    }
+    
     std::auto_ptr<OFX::Image> dst(_dstClip->fetchImage(args.time));
     std::auto_ptr<OFX::Image> src(_srcClip->fetchImage(args.time));
 
     if (!dst.get() || !src.get()) {
+        OFX::throwSuiteStatusException(kOfxStatFailed);
+    }
+    
+    // Verify image bounds match
+    OfxRectI dstBounds = dst->getBounds();
+    OfxRectI srcBounds = src->getBounds();
+    if (dstBounds.x1 != srcBounds.x1 || dstBounds.y1 != srcBounds.y1 || 
+        dstBounds.x2 != srcBounds.x2 || dstBounds.y2 != srcBounds.y2) {
         OFX::throwSuiteStatusException(kOfxStatFailed);
     }
 
@@ -357,8 +382,20 @@ bool FluidSwirlPlugin::isIdentity(const OFX::IsIdentityArguments &args, OFX::Cli
 {
     double swirlIntensity = _swirlIntensity->getValueAtTime(args.time);
     double flowStrength = _flowStrength->getValueAtTime(args.time);
+    int flowMode = _flowMode->getValueAtTime(args.time);
     
-    if (swirlIntensity == 0.0 && flowStrength == 0.0) {
+    // Check if effect is essentially disabled
+    bool isDisabled = false;
+    
+    if (flowMode == 0) {
+        // Radial swirl mode - check swirl intensity
+        isDisabled = (fabs(swirlIntensity) < 0.001);
+    } else {
+        // Directional flow or boat wake modes - check both parameters
+        isDisabled = (fabs(swirlIntensity) < 0.001 && fabs(flowStrength) < 0.001);
+    }
+    
+    if (isDisabled) {
         identityClip = _srcClip;
         identityTime = args.time;
         return true;
