@@ -336,20 +336,35 @@ private:
                             projDirY /= projDirLength;
                         }
                         
-                        // Calculate displacement strength (stronger closer to projectile)
-                        double falloff = exp(-distanceFromProjectile / (_projectileRadius * 0.2));
-                        double displacement = _swirlIntensity * 80.0 * falloff; // Stronger base displacement
+                        // Calculate EXTREME displacement strength for massive pulling effect
+                        double falloff = exp(-distanceFromProjectile / (_projectileRadius * 0.15)); // Tighter falloff
+                        double baseDisplacement = _swirlIntensity * 150.0 * falloff; // Almost 2x stronger
                         
-                        // Pull pixels in projectile direction with some perpendicular swirl
-                        double perpX = -projDirY; // Perpendicular to projectile direction
+                        // Additional "suction" effect - pixels get dragged along more aggressively
+                        double suctionEffect = _swirlIntensity * 50.0 * falloff;
+                        
+                        // Pull pixels STRONGLY in projectile direction
+                        double totalDisplacement = baseDisplacement + suctionEffect;
+                        
+                        // Directional pulling with enhanced strength
+                        srcX += projDirX * totalDisplacement;
+                        srcY += projDirY * totalDisplacement;
+                        
+                        // Add some perpendicular swirl (but less than before)
+                        double perpX = -projDirY;
                         double perpY = projDirX;
-                        
-                        // Add rotational component based on distance from trajectory line
                         double perpDist = fabs(dx * perpX + dy * perpY);
-                        double swirlAmount = displacement * 0.5 * sin(perpDist * 0.1);
+                        double swirlAmount = totalDisplacement * 0.3 * sin(perpDist * 0.08); // Reduced swirl, more drag
                         
-                        srcX = x + projDirX * displacement + perpX * swirlAmount;
-                        srcY = y + projDirY * displacement + perpY * swirlAmount;
+                        srcX += perpX * swirlAmount;
+                        srcY += perpY * swirlAmount;
+                        
+                        // Additional "vacuum" effect - pull pixels from behind the projectile
+                        if ((dx * projDirX + dy * projDirY) < 0) { // Behind projectile
+                            double vacuumPull = _swirlIntensity * 30.0 * falloff;
+                            srcX += projDirX * vacuumPull;
+                            srcY += projDirY * vacuumPull;
+                        }
                     }
                     
                     // Add wake trail effect - disturbance behind projectile
@@ -380,20 +395,35 @@ private:
                                 double ageOfWake = 1.0 - (projOntoWake / wakeLength); // Newer wake is stronger
                                 wakeStrength *= exp(-ageOfWake / _wakeDecayParam);
                                 
-                                // Strong longitudinal streaking (along projectile direction)
-                                double streakDistance = wakeStrength * 20.0; // Much stronger streaking
-                                srcX += wakeDirX * streakDistance * (1.0 + sin(distToWake * 0.1) * 0.3);
-                                srcY += wakeDirY * streakDistance * (1.0 + cos(distToWake * 0.1) * 0.3);
+                                // EXTREME longitudinal streaking - drag the image behind projectile
+                                double baseStreakDistance = wakeStrength * 60.0; // 3x stronger base streaking
                                 
-                                // Add perpendicular diffusion (spreading outward)
+                                // Distance-based streak multiplier - closer to wake = more streaking
+                                double streakMultiplier = 1.0 + (3.0 * exp(-distToWake / (_wakeWidth * 0.2)));
+                                
+                                // Age-based streak boost - newer parts of wake streak more
+                                double ageBoost = 1.0 + (2.0 * ageOfWake); // Newer wake streaks MORE
+                                
+                                double totalStreakDistance = baseStreakDistance * streakMultiplier * ageBoost;
+                                
+                                // Apply massive directional streaking
+                                srcX += wakeDirX * totalStreakDistance * (1.0 + sin(distToWake * 0.08) * 0.4);
+                                srcY += wakeDirY * totalStreakDistance * (1.0 + cos(distToWake * 0.08) * 0.4);
+                                
+                                // Add additional "drag" effect - pull pixels along the entire wake
+                                double dragEffect = wakeStrength * 25.0 * (1.0 - ageOfWake * 0.5);
+                                srcX += wakeDirX * dragEffect;
+                                srcY += wakeDirY * dragEffect;
+                                
+                                // Reduced perpendicular diffusion (focus on longitudinal streaking)
                                 double perpX = -wakeDirY;
                                 double perpY = wakeDirX;
-                                double diffusion = wakeStrength * 5.0 * sin(projOntoWake * 0.05 + distToWake * 0.2);
+                                double diffusion = wakeStrength * 3.0 * sin(projOntoWake * 0.05 + distToWake * 0.2);
                                 srcX += perpX * diffusion;
                                 srcY += perpY * diffusion;
                                 
-                                // Add some turbulent mixing
-                                double turbulence = wakeStrength * 8.0;
+                                // Enhanced turbulent mixing for more chaos
+                                double turbulence = wakeStrength * 12.0;
                                 srcX += sin(distToWake * 0.4 + projOntoWake * 0.08) * turbulence;
                                 srcY += cos(distToWake * 0.35 + projOntoWake * 0.12) * turbulence;
                             }
@@ -521,9 +551,9 @@ private:
                         double totalWeight = 0.0;
                         double sampledColor[4] = {0.0, 0.0, 0.0, 0.0}; // Max 4 components
                         
-                        // Sample multiple points around the source location for blur/diffusion
-                        int numSamples = 5; // Number of samples for diffusion
-                        double blurRadius = wakeBlurAmount * 3.0;
+                        // Sample MORE points for EXTREME diffusion and streaking
+                        int numSamples = 8; // More samples for smoother diffusion
+                        double blurRadius = wakeBlurAmount * 6.0; // 2x larger blur radius for more smearing
                         
                         for (int s = 0; s < numSamples; s++) {
                             double angle = (s * 2.0 * M_PI) / numSamples;
