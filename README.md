@@ -1,6 +1,6 @@
 # Fluid Swirl Plugin for DaVinci Resolve
 
-A professional OpenFX plugin that creates fluid swirl distortion effects, making your video appear as if shot through water or other fluid mediums.
+A simple OpenFX plugin that creates fluid swirl distortion effects, making your video appear as if shot through water or other fluid mediums.
 
 ## Features
 
