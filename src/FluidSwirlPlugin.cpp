@@ -281,19 +281,51 @@ private:
                     srcY = y - flowEffect * flowSin;
                     
                 } else if (applyEffect && _flowMode == 2) {
-                    // Projectile Wake Effect - like a bullet flying through fluid
+                    // Projectile Wake Effect - like a bullet flying through fluid with expanding waves
                     
                     // Calculate projectile position based on time
                     double progress = (_currentTime / _projectileSpeed);
                     double projectileX = _projectileStartX + progress * (_projectileEndX - _projectileStartX);
                     double projectileY = _projectileStartY + progress * (_projectileEndY - _projectileStartY);
                     
+                    // Add expanding wave distortion from start point
+                    double distFromStart = sqrt((x - _projectileStartX) * (x - _projectileStartX) + 
+                                              (y - _projectileStartY) * (y - _projectileStartY));
+                    
+                    double waveRadius = progress * _projectileRadius * 4.0;
+                    double maxWaveRadius = _projectileRadius * 8.0;
+                    waveRadius = std::min(waveRadius, maxWaveRadius);
+                    
+                    // Apply expanding wave distortion
+                    if (distFromStart < waveRadius && waveRadius > 1.0 && distFromStart > 0.1) {
+                        double waveDirection = atan2(y - _projectileStartY, x - _projectileStartX);
+                        double waveStrength = _swirlIntensity * 15.0; // Wave displacement strength
+                        
+                        // Wave front effect - stronger at the edges
+                        double distanceRatio = distFromStart / waveRadius;
+                        double waveFrontEffect = sin(distanceRatio * M_PI) * 2.0; // Peak at middle of wave
+                        
+                        // Time decay
+                        double timeDecay = exp(-progress / (_wakeDecayParam * 2.0));
+                        
+                        double totalWaveDisplacement = waveStrength * waveFrontEffect * timeDecay;
+                        
+                        // Apply radial displacement (outward from start point)
+                        srcX += cos(waveDirection) * totalWaveDisplacement;
+                        srcY += sin(waveDirection) * totalWaveDisplacement;
+                        
+                        // Add some rotational component for more fluid-like motion
+                        double rotationalComponent = totalWaveDisplacement * 0.3;
+                        srcX += -sin(waveDirection) * rotationalComponent * sin(distFromStart * 0.1);
+                        srcY += cos(waveDirection) * rotationalComponent * sin(distFromStart * 0.1);
+                    }
+                    
                     // Distance from current projectile position
                     double dx = x - projectileX;
                     double dy = y - projectileY;
                     double distanceFromProjectile = sqrt(dx * dx + dy * dy);
                     
-                    // Calculate displacement field around projectile
+                    // Calculate displacement field around current projectile position
                     if (distanceFromProjectile < _projectileRadius && distanceFromProjectile > 0.1) {
                         // Strong displacement field - pull pixels toward projectile trajectory
                         double projDirX = _projectileEndX - _projectileStartX;
@@ -379,6 +411,39 @@ private:
                     double projectileX = _projectileStartX + progress * (_projectileEndX - _projectileStartX);
                     double projectileY = _projectileStartY + progress * (_projectileEndY - _projectileStartY);
                     
+                    // Check for expanding wave diffusion from start point
+                    double distFromStart = sqrt((x - _projectileStartX) * (x - _projectileStartX) + 
+                                              (y - _projectileStartY) * (y - _projectileStartY));
+                    
+                    // Wave expansion: starts small and grows over time
+                    double waveRadius = progress * _projectileRadius * 4.0; // Wave expands 4x projectile radius
+                    double maxWaveRadius = _projectileRadius * 8.0; // Maximum expansion
+                    waveRadius = std::min(waveRadius, maxWaveRadius);
+                    
+                    // Check if we're in the expanding wave field
+                    if (distFromStart < waveRadius && waveRadius > 1.0) {
+                        double waveStrength = _flowStrength * 0.5; // Base wave strength
+                        
+                        // Create ripple effect - stronger at wave fronts
+                        double ripplePhase = (distFromStart / waveRadius) * 2.0 * M_PI;
+                        double rippleEffect = (sin(ripplePhase * 3.0) + 1.0) * 0.5; // 0 to 1
+                        
+                        // Distance-based falloff
+                        double waveFalloff = 1.0 - (distFromStart / waveRadius);
+                        waveFalloff = waveFalloff * waveFalloff; // Quadratic falloff
+                        
+                        // Time-based decay
+                        double timeDecay = exp(-progress / _wakeDecayParam);
+                        
+                        double totalWaveStrength = waveStrength * rippleEffect * waveFalloff * timeDecay;
+                        
+                        if (totalWaveStrength > wakeBlurAmount) {
+                            inWakeArea = true;
+                            wakeBlurAmount = totalWaveStrength;
+                        }
+                    }
+                    
+                    // Original wake trail (but with expanding width)
                     double wakeStartX = _projectileStartX;
                     double wakeStartY = _projectileStartY;
                     double wakeEndX = projectileX;
@@ -397,12 +462,33 @@ private:
                             double closestY = wakeStartY + projOntoWake * wakeDirY;
                             double distToWake = sqrt((x - closestX) * (x - closestX) + (y - closestY) * (y - closestY));
                             
-                            if (distToWake < _wakeWidth) {
-                                inWakeArea = true;
-                                wakeBlurAmount = _flowStrength * exp(-distToWake / (_wakeWidth * 0.4));
+                            // Wake width expands over time/distance
+                            double dynamicWakeWidth = _wakeWidth * (1.0 + progress * 2.0); // Expands 3x over time
+                            
+                            if (distToWake < dynamicWakeWidth) {
+                                double trailBlurAmount = _flowStrength * exp(-distToWake / (dynamicWakeWidth * 0.4));
                                 double ageOfWake = 1.0 - (projOntoWake / wakeLength);
-                                wakeBlurAmount *= exp(-ageOfWake / _wakeDecayParam);
+                                trailBlurAmount *= exp(-ageOfWake / _wakeDecayParam);
+                                
+                                if (trailBlurAmount > wakeBlurAmount) {
+                                    inWakeArea = true;
+                                    wakeBlurAmount = trailBlurAmount;
+                                }
                             }
+                        }
+                    }
+                    
+                    // Add concentric ripples around current projectile position
+                    double distFromProjectile = sqrt((x - projectileX) * (x - projectileX) + 
+                                                    (y - projectileY) * (y - projectileY));
+                    
+                    if (distFromProjectile < _projectileRadius * 2.0) {
+                        double ripplePhase = (distFromProjectile / _projectileRadius) * M_PI;
+                        double rippleStrength = _flowStrength * 0.3 * sin(ripplePhase);
+                        
+                        if (rippleStrength > 0 && rippleStrength > wakeBlurAmount * 0.5) {
+                            inWakeArea = true;
+                            wakeBlurAmount = std::max(wakeBlurAmount, rippleStrength);
                         }
                     }
                 }
